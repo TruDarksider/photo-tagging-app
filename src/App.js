@@ -1,4 +1,7 @@
 import './App.css';
+import React from 'react';
+import GameBar from './Components/GameBar.js';
+import PlayArea from './Components/PlayArea'
 import { initializeApp } from 'firebase/app'
 
 const firebaseConfig= {
@@ -15,11 +18,20 @@ const app = initializeApp(firebaseConfig);
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        
-      </header>
+      <GameBar />
+      <PlayArea />
     </div>
   );
 }
 
 export default App;
+
+/* Actions that need to happen:
+Backend needs to have an answer key as to where each character is on image
+-I need to create answer key, but what does the key look like? A set of pixels that is acceptable? Relative position within the picture?
+-And is the key a picture or just a file with a list of possibilities?
+
+
+
+
+*/
