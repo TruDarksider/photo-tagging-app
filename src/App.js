@@ -17,6 +17,7 @@ const firebaseConfig= {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+//const { getDatabase } = require('../firebase-admin/database');
 
 //The Backend call?
 // Get a list of Colbys from your database
@@ -47,6 +48,8 @@ Backend needs to have an answer key as to where each character is on image
 
 --Above may be partially started by calling for the backend answer key.... which doesn't exist yet
 - for reference: https://firebase.google.com/docs/firestore/query-data/get-data
+
+-IMPORTANT: Fix security rules, currently anyone could read/write
 
 
 

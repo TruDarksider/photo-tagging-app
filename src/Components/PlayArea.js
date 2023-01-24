@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import image from '../ColbysAndCrew.png'
 
-const PlayArea = () => {
+const PlayArea = (props) => {
+  const answerKey = props;
   const [cursor, setCursor] = useState('crosshair');
   const [guess, setGuess] = useState(false);
 
@@ -22,6 +23,7 @@ const PlayArea = () => {
       let yCoor = e.clientY - bounds.top;
       console.log('Left: ' + xCoor + ' Top: ' + yCoor);
     }
+    console.log(answerKey);
   }
 
   function showColbyOptions(e) {
@@ -37,13 +39,13 @@ const PlayArea = () => {
     //Create Menu
     let colbyOptions = document.createElement('ul');
     let colby1 = document.createElement('li');
-    colby1.textContent = 'Colby 1';
+    colby1.textContent = 'No Nose Colby';
     colbyOptions.appendChild(colby1);
     let colby2 = document.createElement('li');
-    colby2.textContent = 'Colby 2';
+    colby2.textContent = 'Goat Colby (not chosen one)';
     colbyOptions.appendChild(colby2);
     let colby3 = document.createElement('li');
-    colby3.textContent = 'Colby 3';
+    colby3.textContent = 'College Colby';
     colbyOptions.appendChild(colby3);
     mouseMenu.appendChild(colbyOptions);
     document.getElementById('PlayArea').appendChild(mouseMenu);
