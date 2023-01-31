@@ -29,7 +29,6 @@ function App() {
   return (
     <div className="App">
       <GameBar />
-      {/* <DropdownMenu /> */}
       <PlayArea answerKey={info}/>
     </div>
   );
