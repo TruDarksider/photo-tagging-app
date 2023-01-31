@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import image from '../ColbysAndCrew.png'
 
 const PlayArea = (props) => {
   const answerKey = props;
   const [cursor, setCursor] = useState('crosshair');
-  const [guess, setGuess] = useState(false);
+  const [xCoor, setXCoor] = useState(0);
+  const [yCoor, setYCoor] = useState(0);
 
   const changeCursor = () => {
     setCursor(prevState =>{
@@ -16,14 +17,35 @@ const PlayArea = (props) => {
   }
 
   const handleGuess = () => {
-    setGuess(!guess)
     document.querySelector('img').onclick = function getCoordinates(e) {
       let bounds = e.target.getBoundingClientRect();
-      let xCoor = e.clientX - bounds.left;
-      let yCoor = e.clientY - bounds.top;
-      console.log('Left: ' + xCoor + ' Top: ' + yCoor);
+      setXCoor(e.clientX - bounds.left);
+      setYCoor(e.clientY - bounds.top);
     }
-    console.log(answerKey);
+  }
+
+  const handleCorrectGuess = (data) => {
+    if(data.topMin < yCoor && data.topMax > yCoor && data.leftMin < xCoor && data.leftMax > xCoor){
+      console.log('That is the correct location of that Colby!')
+    } else {
+      handleIncorrectGuess();
+    }
+  }
+
+  const handleIncorrectGuess = () => {
+    console.log('That was not the correct Colby');
+  }
+
+  const isThisTheColby = (e) => {
+    if(e.target.matches('li')){
+      let colbyGuess = e.target.textContent;
+      let matchedColby = answerKey.answerKey.find(item => item.id === colbyGuess);
+      if(matchedColby){
+        handleCorrectGuess(matchedColby.data);
+      } else {
+        handleIncorrectGuess();
+      }
+    }
   }
 
   function showColbyOptions(e) {
@@ -39,13 +61,13 @@ const PlayArea = (props) => {
     //Create Menu
     let colbyOptions = document.createElement('ul');
     let colby1 = document.createElement('li');
-    colby1.textContent = 'No Nose Colby';
+    colby1.textContent = 'NoNoseColby';
     colbyOptions.appendChild(colby1);
     let colby2 = document.createElement('li');
-    colby2.textContent = 'Goat Colby (not chosen one)';
+    colby2.textContent = 'GoatColby';
     colbyOptions.appendChild(colby2);
     let colby3 = document.createElement('li');
-    colby3.textContent = 'College Colby';
+    colby3.textContent = 'CollegeColby';
     colbyOptions.appendChild(colby3);
     mouseMenu.appendChild(colbyOptions);
     document.getElementById('PlayArea').appendChild(mouseMenu);
@@ -53,7 +75,7 @@ const PlayArea = (props) => {
   }
   
   // Close the dropdown menu if the user clicks outside of it
-    function removeDropdown(e){
+  function removeDropdown(e){
     if (!e.target.matches('li') ) {
       document.getElementById('myDropdown').remove();
     }
@@ -62,6 +84,7 @@ const PlayArea = (props) => {
   const colbyLocationGuess = (e) => {
     if(document.getElementById('myDropdown')){
       removeDropdown(e);
+      isThisTheColby(e);
       changeCursor();
     } else {
       changeCursor();
