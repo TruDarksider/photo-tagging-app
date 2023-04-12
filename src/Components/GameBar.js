@@ -3,7 +3,7 @@ import React from "react";
 const GameBar = () => {
     return (
         <div className="GameBar">
-            <h2>You are Finding Colby</h2>
+            <h2>Match the Colors</h2>
             <span>Timer Go Here</span>
         </div>
     );

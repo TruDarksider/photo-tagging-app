@@ -10,18 +10,18 @@ function App() {
   const [info, setInfo] = useState([]);
 
   useEffect(()=>{
-    getColors();
+    getColbys();
   },[])
 
-  function getColors(){
-    const colorCollectionRef = collection(db, 'colors');
-    getDocs(colorCollectionRef)
+  function getColbys(){
+    const colbyCollectionRef = collection(db, 'ColbyLocations');
+    getDocs(colbyCollectionRef)
       .then(response =>{
-        const colors = response.docs.map(doc => ({
+        const colbys = response.docs.map(doc => ({
           data: doc.data(), 
           id: doc.id,
         }));
-        setInfo(colors);
+        setInfo(colbys);
       })
       .catch(error=>console.log(error.message))
   }
@@ -38,5 +38,8 @@ export default App;
 
 /* Actions that need to happen:
 -IMPORTANT: Fix security rules, currently anyone could read/write
+
+
+
 
 */
