@@ -17,13 +17,27 @@ function App() {
     const colorCollectionRef = collection(db, 'colors');
     getDocs(colorCollectionRef)
       .then(response =>{
-        const colors = response.docs.map(doc => ({
+        const allColors = response.docs.map(doc => ({
           data: doc.data(), 
           id: doc.id,
         }));
-        setInfo(colors);
+        setInfo(getThreeColors(allColors));
       })
       .catch(error=>console.log(error.message))
+  }
+
+  function getThreeColors(allColors) {
+    let colorArray = [];
+    for (let i = 0; i < 3; i++){
+      let index = Math.floor(Math.random() * allColors.length);
+      //Check for duplicate
+      while (colorArray.indexOf(allColors[index])!==-1) {
+        index = Math.floor(Math.random() * allColors.length);
+        console.log('Oops a dupe')
+      }
+      colorArray.push(allColors[index]);
+    }
+    return colorArray;
   }
 
   return (

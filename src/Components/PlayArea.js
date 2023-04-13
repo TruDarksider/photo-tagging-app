@@ -1,10 +1,25 @@
 import React, { useEffect, useState } from 'react';
+/* import { initializeApp } from 'firebase/app'
+import { getFirestore, doc, setDoc } from 'firebase/firestore' */
 
 const PlayArea = (props) => {
-    const answerKey = props;
+  const { answerKey} = props;
     const [cursor, setCursor] = useState('crosshair');
     const [xCoor, setXCoor] = useState(0);
-    const [yCoor, setYCoor] = useState(0);
+  const [yCoor, setYCoor] = useState(0);
+
+  //Firebase Stuff
+  /* const firebaseConfig= {
+    apiKey: "AIzaSyDnPN-s6Tupny3TFCQTLuRlzV6YOQxyNig",
+    authDomain: "photo-tagging-app-b6ff2.firebaseapp.com",
+    projectId: "photo-tagging-app-b6ff2",
+    storageBucket: "photo-tagging-app-b6ff2.appspot.com",
+    messagingSenderId: "99182045733",
+    appId: "1:99182045733:web:a93697c3582f18245d2dcc"
+  };
+  
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(); */
    
     useEffect(()=>{
         createBoard();    
@@ -97,32 +112,46 @@ const PlayArea = (props) => {
     }
   }
     
-    const rgbToHex = (r, g, b) => '#' + [r, g, b].map(x => {
-  const hex = x.toString(16)
-  return hex.length === 1 ? '0' + hex : hex
-}).join('')
+  function rgbToHex(R,G,B) {return toHex(R)+toHex(G)+toHex(B)}
+function toHex(n) {
+ n = parseInt(n,10);
+ if (isNaN(n)) return "00";
+ n = Math.max(0,Math.min(n,255));
+ return "0123456789ABCDEF".charAt((n-n%16)/16)
+      + "0123456789ABCDEF".charAt(n%16);
+}
 
-    const createBoard = () => {
+    const createBoard = async () => {
         let PlayArea = document.querySelector('#PlayArea');
         let red = 255;
         let blue = 255+28;
-        let green = 0;
+      let green = 0;
         
         for (let i = 10; i > 0; i--){
           for (let j = 0; j < 15; j++){
             let square = document.createElement('div');
             let thisRed = Math.round(red - (255/14 * j));
             let thisGreen = Math.round(green + (2 * i * j));
-            let thisBlue = Math.round(blue - (255/9 * i));
+            let thisBlue = Math.round(blue - (255 / 9 * i));
+            let left = 128 * j;
+            let top = 1080 - 108 * i;
             let rgb = 'width:128px;height:108px;background-color:rgb(' + thisRed + ', ' + thisGreen + ', ' + thisBlue + ');';
             square.setAttribute('style', rgb);
-            square.textContent = square.style.backgroundColor + ', ' + rgbToHex(thisRed, thisGreen, thisBlue) + ', left: ' + 128*j + ', top: ' + (1080-108*i);
+            square.textContent = square.style.backgroundColor + ', ' + rgbToHex(thisRed, thisGreen, thisBlue) + ', left: ' + left + ', top: ' + top;
             PlayArea.appendChild(square);
+            //Write to db
+            /* let thisSquare = doc(db, 'colors/' + rgbToHex(thisRed, thisGreen, thisBlue))
+            setDoc(thisSquare, { left: left, top: top, })
+              .then(() => console.log('Yay'))
+            .catch((error)=>console.log(error)) */
+
           }
         }
         PlayArea.setAttribute('style', 'width:1920px;height:1080px;display:flex;flex-wrap:wrap;');
     }
     
+  console.log(answerKey);
+  
     return (
         <div id='PlayArea' className="PlayArea" style={{ cursor: cursor }} onClick={colorLocationGuess}>
         </div>
