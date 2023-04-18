@@ -20,6 +20,7 @@ function App() {
         const allColors = response.docs.map(doc => ({
           data: doc.data(), 
           id: doc.id,
+          found: false,
         }));
         setInfo(getThreeColors(allColors));
       })
@@ -40,10 +41,21 @@ function App() {
     return colorArray;
   }
 
+  function updateFound(e) {
+    //const color2update = e.target.textContent;
+    let tempColor = info;
+    for (let color of tempColor) {
+      if (color.id === e.target.textContent) {
+        color.found = true;
+      }
+    }
+    setInfo(tempColor);
+  }
+
   return (
     <div className="App">
-      <GameBar />
-      <PlayArea answerKey={info}/>
+      <GameBar colors={info} />
+      <PlayArea answerKey={info} updateFound={updateFound} />
     </div>
   );
 }

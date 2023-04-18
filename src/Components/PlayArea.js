@@ -1,11 +1,12 @@
+//import { doc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 /* import { initializeApp } from 'firebase/app'
 import { getFirestore, doc, setDoc } from 'firebase/firestore' */
 
 const PlayArea = (props) => {
-  const { answerKey} = props;
-    const [cursor, setCursor] = useState('crosshair');
-    const [xCoor, setXCoor] = useState(0);
+  const { answerKey, updateFound } = props;
+  const [cursor, setCursor] = useState('crosshair');
+  const [xCoor, setXCoor] = useState(0);
   const [yCoor, setYCoor] = useState(0);
 
   //Firebase Stuff
@@ -36,15 +37,20 @@ const PlayArea = (props) => {
 
   const handleGuess = () => {
     document.querySelector('#PlayArea').onclick = function getCoordinates(e) {
-      let bounds = e.target.getBoundingClientRect();
-      setXCoor(e.clientX - bounds.left);
-      setYCoor(e.clientY - bounds.top);
+      if (!e.target.matches('li')) {
+        let bounds = e.target.parentNode.getBoundingClientRect();
+        setXCoor(e.clientX - bounds.left);
+        setYCoor(e.clientY - bounds.top);
+      }
     }
   }
 
-  const handleCorrectGuess = (data) => {
-    if(data.topMin < yCoor && data.topMax > yCoor && data.leftMin < xCoor && data.leftMax > xCoor){
-      console.log('You found the color!')
+  const handleCorrectGuess = (data, colorGuess) => {
+    if (data.top < yCoor && data.top + 108 > yCoor && data.left < xCoor && data.left + 128 > xCoor) {
+      //Update Color.Found and Change background color
+      let id = '#A' + colorGuess; //'A' is because some id's would be invalid
+      document.querySelector(id).style.backgroundColor = '#'+colorGuess;
+      console.log(answerKey)
     } else {
       handleIncorrectGuess();
     }
@@ -58,9 +64,10 @@ const PlayArea = (props) => {
   const isThisTheColor = (e) => {
     if(e.target.matches('li')){
       let colorGuess = e.target.textContent;
-      let matchedColor = answerKey.answerKey.find(item => item.id === colorGuess);
-      if(matchedColor){
-        handleCorrectGuess(matchedColor.data);
+      let matchedColor = answerKey.find(item => item.id === colorGuess);
+      if (matchedColor) {
+        e.target.onclick = updateFound;
+        handleCorrectGuess(matchedColor.data, colorGuess);
       } else {
         handleIncorrectGuess();
       }
@@ -80,13 +87,13 @@ const PlayArea = (props) => {
     //Create Menu
     let colorOptions = document.createElement('ul');
     let color1 = document.createElement('li');
-    color1.textContent = 'Color1';
+    color1.textContent = answerKey.at(0).id;
     colorOptions.appendChild(color1);
     let color2 = document.createElement('li');
-    color2.textContent = 'Color2';
+    color2.textContent = answerKey.at(1).id;
     colorOptions.appendChild(color2);
     let color3 = document.createElement('li');
-    color3.textContent = 'Color3';
+    color3.textContent = answerKey.at(2).id;
     colorOptions.appendChild(color3);
     mouseMenu.appendChild(colorOptions);
     document.getElementById('PlayArea').appendChild(mouseMenu);
@@ -130,6 +137,7 @@ function toHex(n) {
         for (let i = 10; i > 0; i--){
           for (let j = 0; j < 15; j++){
             let square = document.createElement('div');
+            square.classList.add('colorSquare')
             let thisRed = Math.round(red - (255/14 * j));
             let thisGreen = Math.round(green + (2 * i * j));
             let thisBlue = Math.round(blue - (255 / 9 * i));
@@ -147,10 +155,8 @@ function toHex(n) {
 
           }
         }
-        PlayArea.setAttribute('style', 'width:1920px;height:1080px;display:flex;flex-wrap:wrap;');
+      PlayArea.setAttribute('style', 'width:1920px;height:1080px;display:flex;flex-wrap:wrap;');
     }
-    
-  console.log(answerKey);
   
     return (
         <div id='PlayArea' className="PlayArea" style={{ cursor: cursor }} onClick={colorLocationGuess}>
