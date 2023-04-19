@@ -1,5 +1,6 @@
 //import { doc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 /* import { initializeApp } from 'firebase/app'
 import { getFirestore, doc, setDoc } from 'firebase/firestore' */
 
@@ -49,7 +50,7 @@ const PlayArea = (props) => {
     if (data.top < yCoor && data.top + 108 > yCoor && data.left < xCoor && data.left + 128 > xCoor) {
       //Update Color.Found and Change background color
       let id = '#A' + colorGuess; //'A' is because some id's would be invalid
-      document.querySelector(id).style.backgroundColor = '#'+colorGuess;
+      document.querySelector(id).style.backgroundColor = '#' + colorGuess;
       console.log(answerKey)
     } else {
       handleIncorrectGuess();
@@ -58,6 +59,7 @@ const PlayArea = (props) => {
 
     const handleIncorrectGuess = () => {
       //TO DO logic to tell user if color has more red/green/blue
+      toast('Oops, wrong color');
     console.log('That was not the correct Color');
   }
 
@@ -159,8 +161,9 @@ function toHex(n) {
     }
   
     return (
-        <div id='PlayArea' className="PlayArea" style={{ cursor: cursor }} onClick={colorLocationGuess}>
-        </div>
+      <div id='PlayArea' className="PlayArea" style={{ cursor: cursor }} onClick={colorLocationGuess}>
+        <Toaster />
+      </div>
     );
 };
 

@@ -35,5 +35,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "devDependencies": {
+    "react-hot-toast": "^2.4.0",
+    "typescript": "^5.0.4",
+    "webpack": "^4.28.3"
+  },
+  "type": "module"
 }
