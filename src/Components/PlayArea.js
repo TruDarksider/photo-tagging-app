@@ -51,16 +51,41 @@ const PlayArea = (props) => {
       //Update Color.Found and Change background color
       let id = '#A' + colorGuess; //'A' is because some id's would be invalid
       document.querySelector(id).style.backgroundColor = '#' + colorGuess;
+      toast.success('Correct!');
       console.log(answerKey)
     } else {
-      handleIncorrectGuess();
+      handleIncorrectGuess(data);
     }
   }
 
-    const handleIncorrectGuess = () => {
+    const handleIncorrectGuess = (data) => {
       //TO DO logic to tell user if color has more red/green/blue
-      toast('Oops, wrong color');
-    console.log('That was not the correct Color');
+      let message = 'Incorrect: Try again with';
+      if (data.left < xCoor && xCoor < data.left + 128 && data.top < yCoor) {
+        message += " more green and red (up)";
+      }
+      else if (data.left < xCoor && xCoor < data.left + 128 && data.top > yCoor) {
+        message += " less green and red (down)";
+      }
+      else if (data.left < xCoor && data.top < yCoor && yCoor < data.top + 108) {
+        message += " less green and blue (left)";
+      }
+      else if (data.left > xCoor && data.top < yCoor && yCoor < data.top + 108) {
+        message += " more green and blue (right)";
+      }
+      else if (data.left > xCoor && data.top > yCoor) {
+        message += ' more blue (diag down right)';
+      }
+      else if (data.left > xCoor && data.top < yCoor) {
+        message += " more green (diag up right)";
+      }
+      else if (data.left < xCoor && data.top > yCoor) {
+        message += " less green (diag down left)";
+      }
+      else if (data.left < xCoor && data.top < yCoor) {
+        message += " more red (diag up left)";
+      }
+      toast(message);
   }
 
   const isThisTheColor = (e) => {
@@ -71,13 +96,13 @@ const PlayArea = (props) => {
         e.target.onclick = updateFound;
         handleCorrectGuess(matchedColor.data, colorGuess);
       } else {
-        handleIncorrectGuess();
+        handleIncorrectGuess(matchedColor.data);
       }
     }
   }
 
   function showColorOptions(e) {
-    //Create Container Div
+    //Create Menu Container Div
     let mouseMenu = document.createElement('div');
     mouseMenu.setAttribute('id', 'myDropdown');
     mouseMenu.classList.add('dropdown-content');
@@ -86,17 +111,23 @@ const PlayArea = (props) => {
     mouseMenu.style.position = 'fixed';
     mouseMenu.style.left = x + 'px';
     mouseMenu.style.top = y + 'px';
-    //Create Menu
+    //Create Menu Options
     let colorOptions = document.createElement('ul');
-    let color1 = document.createElement('li');
-    color1.textContent = answerKey.at(0).id;
-    colorOptions.appendChild(color1);
-    let color2 = document.createElement('li');
-    color2.textContent = answerKey.at(1).id;
-    colorOptions.appendChild(color2);
-    let color3 = document.createElement('li');
-    color3.textContent = answerKey.at(2).id;
-    colorOptions.appendChild(color3);
+    if (!answerKey.at(0).found) {
+      let color1 = document.createElement("li");
+      color1.textContent = answerKey.at(0).id;
+      colorOptions.appendChild(color1);
+    }
+    if (!answerKey.at(1).found) {
+      let color2 = document.createElement('li');
+      color2.textContent = answerKey.at(1).id;
+      colorOptions.appendChild(color2);
+    }
+    if (!answerKey.at(2).found) {
+      let color3 = document.createElement('li');
+      color3.textContent = answerKey.at(2).id;
+      colorOptions.appendChild(color3);
+    }
     mouseMenu.appendChild(colorOptions);
     document.getElementById('PlayArea').appendChild(mouseMenu);
     document.getElementById('myDropdown').classList.toggle("show");
@@ -121,14 +152,15 @@ const PlayArea = (props) => {
     }
   }
     
-  function rgbToHex(R,G,B) {return toHex(R)+toHex(G)+toHex(B)}
+  //Used during dev to display relavent info inside pixel
+ /*  function rgbToHex(R,G,B) {return toHex(R)+toHex(G)+toHex(B)}
 function toHex(n) {
  n = parseInt(n,10);
  if (isNaN(n)) return "00";
  n = Math.max(0,Math.min(n,255));
  return "0123456789ABCDEF".charAt((n-n%16)/16)
       + "0123456789ABCDEF".charAt(n%16);
-}
+} */
 
     const createBoard = async () => {
         let PlayArea = document.querySelector('#PlayArea');
@@ -138,23 +170,33 @@ function toHex(n) {
         
         for (let i = 10; i > 0; i--){
           for (let j = 0; j < 15; j++){
-            let square = document.createElement('div');
-            square.classList.add('colorSquare')
-            let thisRed = Math.round(red - (255/14 * j));
-            let thisGreen = Math.round(green + (2 * i * j));
-            let thisBlue = Math.round(blue - (255 / 9 * i));
+            let square = document.createElement("div");
+            square.classList.add("colorSquare");
+            let thisRed = Math.round(red - (255 / 14) * j);
+            let thisGreen = Math.round(green + 2 * i * j);
+            let thisBlue = Math.round(blue - (255 / 9) * i);
+            let rgb =
+              "width:128px;height:108px;background-color:rgb(" +
+              thisRed +
+              ", " +
+              thisGreen +
+              ", " +
+              thisBlue +
+              ");";
+            square.setAttribute("style", rgb);
+            
+            //For dev, each square shows details of color and location
+            /* square.textContent = square.style.backgroundColor + ', ' + rgbToHex(thisRed, thisGreen, thisBlue) + ', left: ' + left + ', top: ' + top;
             let left = 128 * j;
-            let top = 1080 - 108 * i;
-            let rgb = 'width:128px;height:108px;background-color:rgb(' + thisRed + ', ' + thisGreen + ', ' + thisBlue + ');';
-            square.setAttribute('style', rgb);
-            square.textContent = square.style.backgroundColor + ', ' + rgbToHex(thisRed, thisGreen, thisBlue) + ', left: ' + left + ', top: ' + top;
+            let top = 1080 - 108 * i; */
+            
             PlayArea.appendChild(square);
-            //Write to db
+            
+            //Create doc for each color as with hex title and location as details to db
             /* let thisSquare = doc(db, 'colors/' + rgbToHex(thisRed, thisGreen, thisBlue))
             setDoc(thisSquare, { left: left, top: top, })
               .then(() => console.log('Yay'))
             .catch((error)=>console.log(error)) */
-
           }
         }
       PlayArea.setAttribute('style', 'width:1920px;height:1080px;display:flex;flex-wrap:wrap;');
