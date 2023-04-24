@@ -36,6 +36,12 @@ const PlayArea = (props) => {
     });
   }
 
+  function gameOverToast() {
+    if (answerKey[0].found && answerKey[1].found && answerKey[2].found) {
+      toast.success('You found all of the colors!');
+    }
+  }
+
   const handleGuess = () => {
     document.querySelector('#PlayArea').onclick = function getCoordinates(e) {
       if (!e.target.matches('li')) {
@@ -52,6 +58,7 @@ const PlayArea = (props) => {
       let id = '#A' + colorGuess; //'A' is because some id's would be invalid
       document.querySelector(id).style.backgroundColor = '#' + colorGuess;
       toast.success('Correct!');
+      gameOverToast();
       console.log(answerKey)
     } else {
       handleIncorrectGuess(data);
