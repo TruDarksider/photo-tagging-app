@@ -9,6 +9,7 @@ const PlayArea = (props) => {
   const [cursor, setCursor] = useState('crosshair');
   const [xCoor, setXCoor] = useState(0);
   const [yCoor, setYCoor] = useState(0);
+  const [colorClicked, setColorClicked] = useState(' ')
 
   //Firebase Stuff
   /* const firebaseConfig= {
@@ -48,6 +49,7 @@ const PlayArea = (props) => {
         let bounds = e.target.parentNode.getBoundingClientRect();
         setXCoor(e.clientX - bounds.left);
         setYCoor(e.clientY - bounds.top);
+        setColorClicked(rgba2hex(e.target.style.backgroundColor));
       }
     }
   }
@@ -59,14 +61,12 @@ const PlayArea = (props) => {
       document.querySelector(id).style.backgroundColor = '#' + colorGuess;
       toast.success('Correct!');
       gameOverToast();
-      console.log(answerKey)
     } else {
       handleIncorrectGuess(data);
     }
   }
 
-    const handleIncorrectGuess = (data) => {
-      //TO DO logic to tell user if color has more red/green/blue
+  const handleIncorrectGuess = (data) => {
       let message = 'Incorrect: Try again with';
       if (data.left < xCoor && xCoor < data.left + 128 && data.top < yCoor) {
         message += " more green and red (up)";
@@ -93,17 +93,19 @@ const PlayArea = (props) => {
         message += " more red (diag up left)";
       }
       toast(message);
-  }
+    }
 
   const isThisTheColor = (e) => {
     if(e.target.matches('li')){
       let colorGuess = e.target.textContent;
-      let matchedColor = answerKey.find(item => item.id === colorGuess);
+      let matchedColor = answerKey.find(item => item.id === colorClicked);
       if (matchedColor) {
-        e.target.onclick = updateFound;
+        e.target.onclick = updateFound(e);
         handleCorrectGuess(matchedColor.data, colorGuess);
       } else {
-        handleIncorrectGuess(matchedColor.data);
+        handleIncorrectGuess(
+          answerKey.find((item) => item.id === colorGuess).data
+        );
       }
     }
   }
@@ -158,9 +160,23 @@ const PlayArea = (props) => {
       showColorOptions(e);
     }
   }
+
+  //For returning colorClicked color as hex value
+  const rgba2hex = (rgba) =>
+    `${rgba
+      .match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+\.{0,1}\d*))?\)$/)
+      .slice(1)
+      .map((n, i) =>
+        (i === 3 ? Math.round(parseFloat(n) * 255) : parseFloat(n))
+          .toString(16)
+          .toUpperCase()
+          .padStart(2, "0")
+          .replace("NAN", "")
+      )
+      .join("")}`;
     
   //Used during dev to display relavent info inside pixel
- /*  function rgbToHex(R,G,B) {return toHex(R)+toHex(G)+toHex(B)}
+  /* function rgbToHex(R,G,B) {return toHex(R)+toHex(G)+toHex(B)}
 function toHex(n) {
  n = parseInt(n,10);
  if (isNaN(n)) return "00";
@@ -190,12 +206,16 @@ function toHex(n) {
               ", " +
               thisBlue +
               ");";
+            /* let rgb =
+              "width:128px;height:108px;background-color:#" +
+              rgbToHex(thisRed, thisGreen, thisBlue); */
             square.setAttribute("style", rgb);
             
             //For dev, each square shows details of color and location
-            /* square.textContent = square.style.backgroundColor + ', ' + rgbToHex(thisRed, thisGreen, thisBlue) + ', left: ' + left + ', top: ' + top;
-            let left = 128 * j;
-            let top = 1080 - 108 * i; */
+            /* let left = 128 * j;
+            let top = 1080 - 108 * i;
+            square.textContent = square.style.backgroundColor + ', ' + rgbToHex(thisRed, thisGreen, thisBlue) + ', left: ' + left + ', top: ' + top; */
+            
             
             PlayArea.appendChild(square);
             

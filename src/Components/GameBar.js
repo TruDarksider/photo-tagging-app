@@ -26,7 +26,7 @@ const GameBar = (props) => {
             <h2>Match the Colors</h2>
             {colors.map(color => {
                 return (
-                <div>
+                <div key={color.id}>
                     {isColorFound(color.found, color.id) }
                 </div>
                 );
