@@ -1,8 +1,6 @@
-//import { doc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-/* import { initializeApp } from 'firebase/app'
-import { getFirestore, doc, setDoc } from 'firebase/firestore' */
+
 
 const PlayArea = (props) => {
   const { answerKey, updateFound } = props;
@@ -11,19 +9,6 @@ const PlayArea = (props) => {
   const [yCoor, setYCoor] = useState(0);
   const [colorClicked, setColorClicked] = useState(' ')
 
-  //Firebase Stuff
-  /* const firebaseConfig= {
-    apiKey: "AIzaSyDnPN-s6Tupny3TFCQTLuRlzV6YOQxyNig",
-    authDomain: "photo-tagging-app-b6ff2.firebaseapp.com",
-    projectId: "photo-tagging-app-b6ff2",
-    storageBucket: "photo-tagging-app-b6ff2.appspot.com",
-    messagingSenderId: "99182045733",
-    appId: "1:99182045733:web:a93697c3582f18245d2dcc"
-  };
-  
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(); */
-   
     useEffect(()=>{
         createBoard();    
     },[])

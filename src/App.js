@@ -62,9 +62,7 @@ function App() {
 
 export default App;
 
-/* Actions that need to happen:
--IMPORTANT: Fix security rules, currently anyone could read/write
--Double click just always removes list item... also don't want to have to double click
+/* Actions that could improve:
 -Maybe make some custom toasts
 -Maybe make hover over last selected square
 -Menu problems if bottom row or right most pixels need to be clicked
