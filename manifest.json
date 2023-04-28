@@ -1,0 +1,8 @@
+{
+  "short_name": "Photo Tagging",
+  "name": "A human made, machine verified 'game'",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
